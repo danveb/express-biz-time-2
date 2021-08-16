@@ -1,8 +1,8 @@
 -- dropdb and createdb 
-DROP DATABASE IF EXISTS biztime;
-CREATE DATABASE biztime;
+DROP DATABASE IF EXISTS biztime2;
+CREATE DATABASE biztime2;
 
-\c biztime;
+\c biztime2;
 
 DROP TABLE IF EXISTS invoices;
 DROP TABLE IF EXISTS companies;
