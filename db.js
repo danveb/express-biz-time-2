@@ -7,10 +7,10 @@ let DB_URI;
 
 if (process.env.NODE_ENV === "test") {
     // setup db for testing
-  DB_URI = "postgresql:///biztime_test";
+  DB_URI = "postgresql:///biztime2_test";
 } else {
     // setup db for main application and development
-  DB_URI = "postgresql:///biztime";
+  DB_URI = "postgresql:///biztime2";
 }
 
 let db = new Client({
