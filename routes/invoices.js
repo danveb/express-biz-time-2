@@ -57,14 +57,32 @@ router.post('/', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
     try {
         // extract id from req.params 
-        const { id } = req.params 
-        // extract amt from req.body 
-        const { amt } = req.body 
+        // const { id } = req.params 
+        // // extract amt from req.body 
+        // const { amt } = req.body 
         // await db.query (SQL); parameterize to prevent SQL Injection
-        const results = await db.query(`UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *`, [amt, id])
+        // const results = await db.query(`UPDATE invoices SET amt=$1, WHERE id=$2 RETURNING *`, [amt, id])
         // error handling for nonexistent invoice
-        if(results.rows.length === 0) {
-            throw new ExpressError("Can't find invoice", 404) 
+        // if(results.rows.length === 0) {
+        //     throw new ExpressError("Can't find invoice", 404) 
+        // }
+
+        const results = await db.query(`UPDATE invoices SET amt=$2 WHERE id =$1 RETURNING id, comp_code, amt, paid, add_date, paid_date`, [req.params.id, req.body.amt])
+
+        if (results.rows.length === 0) {
+            throw new ExpressError(`invoice with id ${req.params.id} can not be found`, 404);
+        }
+
+        if (req.body.paid !== undefined) {
+            if (req.body.paid === true || req.body.paid === false) {
+                //only set paid to true or false would update the paid_date
+                const paid = req.body.paid === true ? true : false
+                const paidDate = paid ? new Date() : null 
+
+                const results = await db.query(`UPDATE invoices SET paid=$2, paid_date=$3 WHERE id=$1      RETURNING id, comp_code, amt, paid, add_date, paid_date`, [req.params.id, paid , paidDate])
+                
+                return res.json({ invoice: results.rows[0] })
+            }
         }
         // return JSON object 
         return res.json({ invoice: results.rows[0] })
